@@ -13,17 +13,13 @@ def main():
   for sack in rucksacks:
     compartment1 = sack[0:len(sack)//2]
     compartment2 = sack[len(sack)//2:]
-    inventory1 = set([*compartment1])
-    inventory2 = set([*compartment2])
-    common_item, = inventory1.intersection(inventory2)
+    common_item, = set([*compartment1]).intersection(set([*compartment2]))
     total += priority[common_item]
   print(total)
 
   total2 = 0
-  i = 0
-  while i < len(rucksacks) - 2:
+  for i in range(0, len(rucksacks), 3):
     badge, = set([*rucksacks[i]]).intersection([*rucksacks[i+1]],[*rucksacks[i+2]])
     total2 += priority[badge]
-    i = i + 3
   print(total2)
 
