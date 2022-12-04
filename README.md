@@ -8,6 +8,6 @@ To run the current day's puzzle:
 
 `python3 main.py`
 
-To run a different day's puzzle add the date number as a parameter:
+To run a different day's puzzle add the date int as a parameter:
 
 `python3 main.py 1`
