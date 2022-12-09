@@ -2,6 +2,8 @@
 
 Solutions from [Advent of Code](https://adventofcode.com/) 2022. This year is Python!
 
+I'm not saying all my solutions will be the _best_ solutions, but they get me my stars and allow me to move on with my day :)
+
 ## Run instructions
 
 To run the current day's puzzle:
