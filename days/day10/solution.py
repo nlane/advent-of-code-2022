@@ -20,7 +20,6 @@ def get_pixel(x, screen_j):
 def update_notable_cycles(notable_cycle_signals, cycle, x):
     if cycle in [20, 60, 100, 140, 180, 220]:
         notable_cycle_signals.append(x * cycle)
-    return notable_cycle_signals
 
 
 def main():
@@ -37,15 +36,13 @@ def main():
         instruction_type = instruction[:4]
         screen[screen_i][screen_j] = get_pixel(x, screen_j)
         screen_i, screen_j = update_cursor(screen_i, screen_j)
-        notable_cycle_signals = update_notable_cycles(notable_cycle_signals, cycle, x)
+        update_notable_cycles(notable_cycle_signals, cycle, x)
         if instruction_type == "addx":
             value = instruction.split(" ")[1]
             cycle += 1
             screen[screen_i][screen_j] = get_pixel(x, screen_j)
             screen_i, screen_j = update_cursor(screen_i, screen_j)
-            notable_cycle_signals = update_notable_cycles(
-                notable_cycle_signals, cycle, x
-            )
+            update_notable_cycles(notable_cycle_signals, cycle, x)
             x += int(value)
         cycle += 1
     print("Part 1: ", sum(notable_cycle_signals))
