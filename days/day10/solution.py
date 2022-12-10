@@ -10,9 +10,21 @@ def update_cursor(screen_i, screen_j):
     return (screen_i, screen_j)
 
 
+def get_pixel(x, screen_j):
+    if screen_j in [x - 1, x, x + 1]:
+        return "#"
+    else:
+        return "."
+
+
+def update_notable_cycles(notable_cycle_signals, cycle, x):
+    if cycle in [20, 60, 100, 140, 180, 220]:
+        notable_cycle_signals.append(x * cycle)
+    return notable_cycle_signals
+
+
 def main():
     instructions = utils.open_file(10).split("\n")
-    notable_cycles = [20, 60, 100, 140, 180, 220]
     notable_cycle_signals = []
     cycle = 1
     x = 1
@@ -23,23 +35,17 @@ def main():
         if screen_i == 6:
             break
         instruction_type = instruction[:4]
-        if cycle in notable_cycles:
-            notable_cycle_signals.append(x * cycle)
-        if screen_j in [x - 1, x, x + 1]:
-            screen[screen_i][screen_j] = "#"
-        else:
-            screen[screen_i][screen_j] = "."
+        screen[screen_i][screen_j] = get_pixel(x, screen_j)
         screen_i, screen_j = update_cursor(screen_i, screen_j)
+        notable_cycle_signals = update_notable_cycles(notable_cycle_signals, cycle, x)
         if instruction_type == "addx":
             value = instruction.split(" ")[1]
             cycle += 1
-            if screen_j in [x - 1, x, x + 1]:
-                screen[screen_i][screen_j] = "#"
-            else:
-                screen[screen_i][screen_j] = "."
+            screen[screen_i][screen_j] = get_pixel(x, screen_j)
             screen_i, screen_j = update_cursor(screen_i, screen_j)
-            if cycle in notable_cycles:
-                notable_cycle_signals.append(x * cycle)
+            notable_cycle_signals = update_notable_cycles(
+                notable_cycle_signals, cycle, x
+            )
             x += int(value)
         cycle += 1
     print("Part 1: ", sum(notable_cycle_signals))
