@@ -13,12 +13,38 @@ acctuvwj
 abdefghi"""
 
 
+def bfs(start, end, graph):
+    current = start
+    steps = 0
+    processed = set()
+    queue = [[current]]
+    while len(queue) and current != end:
+        current_level = queue.pop(0)
+        steps += 1
+        neighbors_to_add_to_queue = []
+        while len(current_level) > 0 and current != end:
+            current = current_level.pop(0)
+            if current not in processed:
+                # process neighbors
+                neighbors = graph[current]
+                for neighbor in neighbors:
+                    if neighbor == end:
+                        current = neighbor
+                        break
+                    if neighbor not in processed:
+                        neighbors_to_add_to_queue.append(neighbor)
+            processed.add(current)
+        queue.append(neighbors_to_add_to_queue)
+    return steps
+
+
 def main():
     elevations_input = utils.open_file(12).split("\n")
     # elevations_input = test.split("\n")
     elevations = []
     start = ()
     end = ()
+    hike_starts = []
     # Find start and end, store their coordinates
     # convert letters to numbers so the values are easier to compare
     for i in range(len(elevations_input)):
@@ -28,11 +54,14 @@ def main():
             if elevation == "S":
                 new_elevation_row.append(1)
                 start = (i, j)
+                hike_starts.append((i, j))
             elif elevation == "E":
                 new_elevation_row.append(26)
                 end = (i, j)
             else:
                 new_elevation_row.append(convert_elevation[elevation])
+                if convert_elevation[elevation] == 1:
+                    hike_starts.append((i, j))
         elevations.append(new_elevation_row)
     graph = {}
     # for each elevation, identify neighbors possible to move to, store in form of graph
@@ -57,26 +86,10 @@ def main():
                 if (elevations[i][j + 1] - elevations[i][j]) < 2:
                     neighbors.append((i, j + 1))
             graph[(i, j)] = neighbors
-    # BFS to find end
-    current = start
-    steps = 0
-    processed = set()
-    queue = [[current]]
-    while len(queue) and current != end:
-        current_level = queue.pop(0)
-        steps += 1
-        neighbors_to_add_to_queue = []
-        while len(current_level) > 0 and current != end:
-            current = current_level.pop(0)
-            if current not in processed:
-                # process neighbors
-                neighbors = graph[current]
-                for neighbor in neighbors:
-                    if neighbor == end:
-                        current = neighbor
-                        break
-                    if neighbor not in processed:
-                        neighbors_to_add_to_queue.append(neighbor)
-            processed.add(current)
-        queue.append(neighbors_to_add_to_queue)
-    print(steps)
+    print("Part 1: ", bfs(start, end, graph))
+    min_hike = float("inf")
+    for hike_start in hike_starts:
+        hike_length = bfs(hike_start, end, graph)
+        if hike_length < min_hike:
+            min_hike = hike_length
+    print("Part 2: ", min_hike)
