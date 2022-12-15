@@ -37,6 +37,31 @@ def bfs(start, end, graph):
         queue.append(neighbors_to_add_to_queue)
     return steps
 
+def bfs_pt2(start, end_val, graph, elevations):
+    current = start
+    steps = 0
+    processed = set()
+    queue = [[current]]
+    while len(queue) and elevations[current[0]][current[1]] != end_val:
+        current_level = queue.pop(0)
+        steps += 1
+        neighbors_to_add_to_queue = []
+        while len(current_level) > 0 and elevations[current[0]][current[1]] != end_val:
+            current = current_level.pop(0)
+            if current not in processed:
+                # process neighbors
+                neighbors = graph[current]
+                for neighbor in neighbors:
+                    if elevations[neighbor[0]][neighbor[1]] == end_val:
+                        current = neighbor
+                        break
+                    if neighbor not in processed:
+                        neighbors_to_add_to_queue.append(neighbor)
+            processed.add(current)
+        queue.append(neighbors_to_add_to_queue)
+    return steps
+
+
 
 def main():
     elevations_input = utils.open_file(12).split("\n")
@@ -87,9 +112,27 @@ def main():
                     neighbors.append((i, j + 1))
             graph[(i, j)] = neighbors
     print("Part 1: ", bfs(start, end, graph))
-    min_hike = float("inf")
-    for hike_start in hike_starts:
-        hike_length = bfs(hike_start, end, graph)
-        if hike_length < min_hike:
-            min_hike = hike_length
-    print("Part 2: ", min_hike)
+    graph_pt2 = {}
+    # for each elevation, identify neighbors possible to move to, store in form of graph
+    for i in range(len(elevations)):
+        for j in range(len(elevations[i])):
+            coord = (i, j)
+            neighbors = []
+            if i > 0:
+                # check up
+                if (elevations[i][j] - elevations[i - 1][j]) < 2:
+                    neighbors.append((i - 1, j))
+            if i < len(elevations) - 1:
+                # check down
+                if (elevations[i][j] - elevations[i + 1][j]) < 2:
+                    neighbors.append((i + 1, j))
+            if j > 0:
+                # check left
+                if (elevations[i][j] - elevations[i][j - 1]) < 2:
+                    neighbors.append((i, j - 1))
+            if j < len(elevations[i]) - 1:
+                # check right
+                if (elevations[i][j] - elevations[i][j + 1]) < 2:
+                    neighbors.append((i, j + 1))
+            graph_pt2[(i, j)] = neighbors
+    print("Part 2: ", bfs_pt2(end, 1, graph_pt2, elevations))
